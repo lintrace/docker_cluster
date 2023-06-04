@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">	
+
+<bean class="org.apache.ignite.configuration.IgniteConfiguration">
+	<property name="workDirectory" value="/gg/work" />
+	<property name="igniteInstanceName" value="MyCluster"/>
+	<!-- <property name="LongQueryWarningTimeout" value="10"/> -->
+	
+	<property name="discoverySpi">
+		<bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+			<property name="ipFinder">
+				<bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder">
+					<property name="addresses">
+						<list>
+							<!-- <value>127.0.0.1:47500..47510</value> -->
+							<value>127.0.0.1:<<tcp_discovery_ports_range>></value>
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>
+	</property>
+
+	<property name="atomicConfiguration">
+		<bean class="org.apache.ignite.configuration.AtomicConfiguration">
+			<property name="atomicSequenceReserveSize" value="20"/>
+			<property name="affinity">
+				<bean class="org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction">
+				</bean>
+			</property>
+		</bean>
+	</property>
+
+
+	<property name="dataStorageConfiguration">
+		<bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+			<property name="defaultDataRegionConfiguration">
+				<bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+					<property name="persistenceEnabled" value="true"/>
+ 		                        <property name="initialSize" value="#{10L * 1024 * 1024}"/>
+                                        <property name="maxSize" value="#{100L * 1024 * 1024 }"/>
+				</bean>
+			</property>
+
+			<property name="walMode" value="LOG_ONLY"/>
+		</bean>
+	</property>
+
+	<property name="failureHandler">
+		<bean class="org.apache.ignite.failure.StopNodeFailureHandler">
+		</bean>
+	</property>
+
+	<property name="consistentId" value="<<consistentId>>"/> 
+	<property name="autoActivationEnabled" value="false"/>
+
+
+	<property name="tracingSpi">
+		<bean class="org.apache.ignite.spi.tracing.opencensus.OpenCensusTracingSpi"/>
+	</property>
+
+</bean>
+
+</beans>
+
+
+
+
+
